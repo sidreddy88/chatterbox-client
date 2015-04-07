@@ -7,6 +7,9 @@ var app = {
   friends:[]
 };
 
+$('body').append('<div id="friends">FRIENDS</div>');
+// $('body').append('<div id="chats"></div>');
+// $('body').append('<div id="roomSelect"></div>');
 
 app.init = function () {
 
@@ -82,7 +85,8 @@ app.addMessage = function(message) {
   var $messageBlock = $('<div class="message"></div>');
   var $userLink = $("<a href='#' class='username'></a>");
   $userLink.attr('data-user-id', message.username);
-  $userLink.on("click", app.addFriend(message.username));
+  debugger;
+  $userLink.on("click", app.addFriend);
   $userLink.html(message.username + ":");
   $messageBlock.append($userLink);
   $messageBlock.append(" " + message.text);
@@ -101,9 +105,21 @@ var message = {
   'roomname': '4chan'
 };
 
-app.addFriend = function (username) {
-   app.friends.push(username);
+app.addFriend = function () {
+  debugger;
+   app.friends.push($(this).data('userId'));
+   app.displayFriends();
 }
+
+app.displayFriends = function () {
+   $("#friends").empty();
+   var friends = app.friends;
+   for (var i = 0 ; i < friends.length; i++) {
+     var $friend = $('<div></div>');
+     $friend.append(friends[i]);
+     $("#friends").append($friend);    
+   }
+};
 
 app.submit = function(message) {
 
@@ -118,6 +134,16 @@ $("form").submit(function (event) {
   messageObj.roomname = "lobby";
   app.send(messageObj);
 });
+
+$( "#inputValue" ).on( "keydown", function(event) {
+  if(event.which == 13) {
+    debugger;
+    var messageText = $('#inputValue').val();
+    prompt("What message do you want to send");
+  }
+        
+});
+
 
 setInterval(app.fetch, 5000);
 
