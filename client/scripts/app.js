@@ -1,9 +1,11 @@
 // YOUR CODE HERE:
 
+//$(document).ready(function(){
 
 var app = {
   server: 'https://api.parse.com/1/classes/chatterbox',
-  messages: []
+  messages: [],
+  friends:[]
 };
 
 
@@ -50,10 +52,26 @@ app.fetch = function() {
   });
 };
 
-app.clearMessage = function () {
-
+app.clearMessages = function () {
+  $("#chats").empty();
 };
 
+app.addMessage = function(message) {
+  var $messageBlock = $('<div></div>');
+  var $userLink = $("<a href='#' class='username'></a>");
+  $userLink.attr('data-user-id', message.username);
+  $userLink.on("click", app.addFriend(message.username));
+  $userLink.html(message.username + ":");
+  $messageBlock.append($userLink);
+  $messageBlock.append(" " + message.text);
+  $("#chats").append($messageBlock);
+};
+
+app.addRoom = function(room) {
+  var $roomBlock = $('<div></div>');
+  $roomBlock.append(room.text);
+  $("#roomSelect").append($roomBlock);
+};
 
 var message = {
   'username': 'shawndrost',
@@ -61,7 +79,14 @@ var message = {
   'roomname': '4chan'
 };
 
-app.fetch();
+app.addFriend = function (username) {
+   app.friends.push(username);
+}
 
+app.addMessage(message);
+
+//});
+
+//app.fetch();
 
 
