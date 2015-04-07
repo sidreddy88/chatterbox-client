@@ -30,6 +30,26 @@ app.send = function (message) {
 
 };
 
+// app.fetch = function () {
+//   debugger;
+//   var chaterbox = Parse.Object.extend("chatterbox");
+//   var query = new Parse.Query(chaterbox);
+//   // Sorts the results in ascending order by the score field
+//    query.ascending("createdAt");
+//    query.find({
+//   success: function(results) {
+//     alert("Successfully retrieved " + results.length + " scores.");
+//     // Do something with the returned Parse.Object values
+    
+//   },
+//   error: function(error) {
+//     alert("Error: " + error.code + " " + error.message);
+//   }
+
+// });
+
+// };
+
 app.fetch = function() {
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
@@ -39,7 +59,11 @@ app.fetch = function() {
       app.messages = data.results;
       app.clearMessages();
       for (var i =0; i < app.messages.length; i++) {
-        app.addMessage(app.messages[i]);
+        var object = app.messages[i];
+        object["username"] = _.escape(object["username"]);
+        object["text"] = _.escape(object["text"]);
+        object["roomname"] = _.escape(object["roomname"]);
+        app.addMessage(object);
       }
       console.log('chatterbox: Message received');
       console.log(data);
