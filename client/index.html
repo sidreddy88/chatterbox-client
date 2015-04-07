@@ -10,7 +10,7 @@
     <script src="bower_components/underscore/underscore-min.js"></script>
     <!-- your scripts -->
     <script src="env/config.js"></script>
-    <script src="scripts/app.js"></script>
+
   </head>
   <body>
     <div id="main">
@@ -19,5 +19,10 @@
     </div>
     <div id="chats"></div>
     <div id="roomSelect"></div>
+    <form name="inputMessage"> 
+      <textarea name="message" placeholder="Write your message here"></textarea>
+      <input type="submit" value="submit" class="submit"></form>
+
   </body>
+  <script src="scripts/app.js"></script>
 </html>

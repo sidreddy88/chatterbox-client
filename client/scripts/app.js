@@ -1,6 +1,5 @@
 // YOUR CODE HERE:
 
-//$(document).ready(function(){
 
 var app = {
   server: 'https://api.parse.com/1/classes/chatterbox',
@@ -9,12 +8,10 @@ var app = {
 };
 
 
-
 app.init = function () {
 
 
 };
-
 
 app.send = function (message) {
   $.ajax({
@@ -33,9 +30,6 @@ app.send = function (message) {
 
 };
 
-
-
-
 app.fetch = function() {
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
@@ -43,6 +37,10 @@ app.fetch = function() {
     contentType: 'application/json',
     success: function (data) {
       app.messages = data.results;
+      app.clearMessages();
+      for (var i =0; i < app.messages.length; i++) {
+        app.addMessage(app.messages[i]);
+      }
       console.log('chatterbox: Message received');
       console.log(data);
     },
@@ -57,7 +55,7 @@ app.clearMessages = function () {
 };
 
 app.addMessage = function(message) {
-  var $messageBlock = $('<div></div>');
+  var $messageBlock = $('<div class="message"></div>');
   var $userLink = $("<a href='#' class='username'></a>");
   $userLink.attr('data-user-id', message.username);
   $userLink.on("click", app.addFriend(message.username));
@@ -83,10 +81,22 @@ app.addFriend = function (username) {
    app.friends.push(username);
 }
 
-app.addMessage(message);
+app.submit = function(message) {
 
-//});
+}
 
-//app.fetch();
+$("form").submit(function (event) {
+  event.preventDefault();
+  var messageText = $(this).find("textarea[name='message']").val();
+  var messageObj = {};
+  messageObj.text = messageText;
+  messageObj.username = "anon";
+  messageObj.roomname = "lobby";
+  app.send(messageObj);
+});
+
+setInterval(app.fetch, 5000);
+
+
 
 
