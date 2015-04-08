@@ -16,6 +16,19 @@ app.init = function () {
 
 };
 
+app.createRoomOptions = function (array) {
+  for (var i = 0; i < array.length; i++) {
+     var $option = $('<option/>');
+     $option.text = array[i];
+     $option.value = array[i];
+     $option.appendTo('select');
+
+      // $('<option/>').value(array[i]['roomname'])
+      // .text(array[i]["roomname"]).appendTo('select');
+   }
+
+};
+
 app.send = function (message) {
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
@@ -33,41 +46,27 @@ app.send = function (message) {
 
 };
 
-// app.fetch = function () {
-//   debugger;
-//   var chaterbox = Parse.Object.extend("chatterbox");
-//   var query = new Parse.Query(chaterbox);
-//   // Sorts the results in ascending order by the score field
-//    query.ascending("createdAt");
-//    query.find({
-//   success: function(results) {
-//     alert("Successfully retrieved " + results.length + " scores.");
-//     // Do something with the returned Parse.Object values
-    
-//   },
-//   error: function(error) {
-//     alert("Error: " + error.code + " " + error.message);
-//   }
-
-// });
-
-// };
-
 app.fetch = function() {
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'GET',
     contentType: 'application/json',
+    data: {order: '-createdAt'},
     success: function (data) {
       app.messages = data.results;
       app.clearMessages();
+      var rooms = [];
       for (var i =0; i < app.messages.length; i++) {
         var object = app.messages[i];
         object["username"] = _.escape(object["username"]);
         object["text"] = _.escape(object["text"]);
         object["roomname"] = _.escape(object["roomname"]);
+        if (rooms.indexOf(object["roomname"]) === -1 && object["roomname"] !== undefined) {
+          rooms.push(object["roomname"]);
+      }
         app.addMessage(object);
       }
+      app.createRoomOptions(rooms);
       console.log('chatterbox: Message received');
       console.log(data);
     },
@@ -85,7 +84,6 @@ app.addMessage = function(message) {
   var $messageBlock = $('<div class="message"></div>');
   var $userLink = $("<a href='#' class='username'></a>");
   $userLink.attr('data-user-id', message.username);
-  debugger;
   $userLink.on("click", app.addFriend);
   $userLink.html(message.username + ":");
   $messageBlock.append($userLink);
@@ -106,7 +104,6 @@ var message = {
 };
 
 app.addFriend = function () {
-  debugger;
    app.friends.push($(this).data('userId'));
    app.displayFriends();
 }
@@ -133,15 +130,6 @@ $("form").submit(function (event) {
   messageObj.username = "anon";
   messageObj.roomname = "lobby";
   app.send(messageObj);
-});
-
-$( "#inputValue" ).on( "keydown", function(event) {
-  if(event.which == 13) {
-    debugger;
-    var messageText = $('#inputValue').val();
-    prompt("What message do you want to send");
-  }
-        
 });
 
 
