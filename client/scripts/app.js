@@ -2,7 +2,8 @@
 
 
 var app = {
-  server: 'https://api.parse.com/1/classes/chatterbox',
+  //server: 'https://api.parse.com/1/classes/chatterbox',
+  server: 'http://127.0.0.1:3000',
   messages: [],
   friends:[]
 };
@@ -12,8 +13,6 @@ $('body').append('<div id="friends">FRIENDS</div>');
 // $('body').append('<div id="roomSelect"></div>');
 
 app.init = function () {
-
-
 };
 
 app.createRoomOptions = function (array) {
@@ -31,15 +30,19 @@ app.createRoomOptions = function (array) {
 
 app.send = function (message) {
   $.ajax({
-    url: 'https://api.parse.com/1/classes/chatterbox',
+    //url: 'https://api.parse.com/1/classes/chatterbox',
+    url: 'http://127.0.0.1:3000/classes/messages',
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
     success: function (data) {
+      debugger;
+      message.objectId = data.objectId;
       console.log('chatterbox: Message sent');
 
     },
     error: function (data) {
+      debugger;
       console.error('chatterbox: Failed to send message');
     }
   });
@@ -48,11 +51,13 @@ app.send = function (message) {
 
 app.fetch = function() {
   $.ajax({
-    url: 'https://api.parse.com/1/classes/chatterbox',
+    //url: 'https://api.parse.com/1/classes/chatterbox',
+    url: 'http://127.0.0.1:3000/classes/messages',
     type: 'GET',
     contentType: 'application/json',
-    data: {order: '-createdAt'},
+    ///data: {order: '-createdAt'},
     success: function (data) {
+      debugger;
       app.messages = data.results;
       app.clearMessages();
       var rooms = [];
@@ -71,6 +76,7 @@ app.fetch = function() {
       console.log(data);
     },
     error: function (data) {
+      debugger;
       console.error('chatterbox: Failed to send message');
     }
   });
@@ -97,11 +103,11 @@ app.addRoom = function(room) {
   $("#roomSelect").append($roomBlock);
 };
 
-var message = {
-  'username': 'shawndrost',
-  'text': 'trololo',
-  'roomname': '4chan'
-};
+// var message = {
+//   'username': 'shawndrost',
+//   'text': 'trololo',
+//   'roomname': '4chan'
+// };
 
 app.addFriend = function () {
    app.friends.push($(this).data('userId'));
@@ -125,15 +131,31 @@ app.submit = function(message) {
 $("form").submit(function (event) {
   event.preventDefault();
   var messageText = $(this).find("textarea[name='message']").val();
+  debugger;
   var messageObj = {};
   messageObj.text = messageText;
   messageObj.username = "anon";
   messageObj.roomname = "lobby";
+ 
   app.send(messageObj);
 });
-
-
+debugger;
+//app.fetch();
 setInterval(app.fetch, 5000);
+/*
+var server = http.createServer(function(request, response) {
+
+  
+  var parts = urlParser.parse(request.url);
+
+  if (parts.pathname === "/classes/chatterbox"){
+      handleRequest(request,response);
+  } else {
+    
+  }
+
+});
+*/
 
 
 
